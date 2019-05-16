@@ -3,10 +3,12 @@
 
 Собирать проект с помощью /other/apache-maven-3.6.0
 Из командной строки в корне проекта:
+```
 	mvn clean package
-	
+```
+
 В папке /other/ собранный проект со всеми зависимостями websocket-message-chat-0.0.1
-Разрешены пользователи:
+Пример файла с пользователями /other/users.properties:
 ```
 	Andrey = true
 	Sergey = true
@@ -17,7 +19,7 @@
 Необходима установленная JRE 1.8+
 Запуск из командной строки:
 ```
-	java -jar websocket-message-chat-0.0.1
+	java -jar websocket-message-chat-0.0.1 --users="путь_до_файла_с_юзерами"
 ```
 	
 Зайти в чат можно по порту 8080 (localhost:8080)

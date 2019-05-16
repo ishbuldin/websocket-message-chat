@@ -1,5 +1,6 @@
 package ru.ishbuldin.andrei.websocketmessagechat;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,11 +12,14 @@ import java.io.File;
 @Controller
 public class MainController {
 
+    @Value("${users}")
+    private String users;
+
     @RequestMapping("/")
     public String index(HttpServletRequest request, Model model) {
         String username = (String) request.getSession().getAttribute("username");
 
-        if (username == null || username.isEmpty() || !AuthUtil.checkUser(new File("src/main/resources/application.properties"), username)) {
+        if (username == null || username.isEmpty() || !AuthUtil.checkUser(new File(users), username)) {
             System.out.println("Invalid User");
             return "redirect:/login";
         }
