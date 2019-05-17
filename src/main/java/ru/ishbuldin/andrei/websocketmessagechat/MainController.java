@@ -1,6 +1,8 @@
 package ru.ishbuldin.andrei.websocketmessagechat;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,48 +10,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 
 @Controller
 public class MainController {
 
-    @Value("${users}")
-    private String users;
-
     @RequestMapping("/")
     public String index(HttpServletRequest request, Model model) {
-        String username = (String) request.getSession().getAttribute("username");
-
-        if (username == null || username.isEmpty() || !AuthUtil.checkUser(new File(users), username)) {
-            System.out.println("Invalid User");
-            return "redirect:/login";
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
         }
+        System.out.println(username);
         model.addAttribute("username", username);
-
         return "chat";
-    }
-
-    @RequestMapping(path = "/login", method = RequestMethod.GET)
-    public String showLoginPage() {
-        return "login";
-    }
-
-    @RequestMapping(path = "/login", method = RequestMethod.POST)
-    public String doLogin(HttpServletRequest request, @RequestParam(defaultValue = "") String username) {
-        username = username.trim();
-
-        if (username.isEmpty()) {
-            return "login";
-        }
-        request.getSession().setAttribute("username", username);
-
-        return "redirect:/";
     }
 
     @RequestMapping(path = "/logout")
     public String logout(HttpServletRequest request) {
         request.getSession(true).invalidate();
-
-        return "redirect:/login";
+        return "redirect:/";
     }
 
 }
